@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mi Busca Libros</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      background-color: #fff;
+      color: #333;
+    }
+    header {
+      background-color: #f6f6f6;
+      padding: 10px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+    }
+    .logo {
+      font-size: 28px;
+      color: purple;
+      font-weight: bold;
+      max-width: 100%;
+      height: auto;
+      flex-shrink: 0;
+    }
+    .top-nav {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      flex-grow: 1;
+      justify-content: flex-end;
+    }
+    .top-nav button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: #333;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .top-nav button:hover {
+      background-color: #e0e0e0;
+    }
+    .top-nav button.active {
+      background-color: #17bad7;
+      color: white;
+      font-weight: bold;
+      pointer-events: none;
+    }
+    .search-bar {
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      width: 250px;
+      margin-left: 20px;
+      max-width: 100%;
+      box-sizing: border-box;
+      flex-grow: 1;
+      min-width: 150px;
+    }
+    main {
+      padding: 30px 15px;
+      box-sizing: border-box;
+    }
+    .hidden {
+      display: none;
+    }
+    /* Perfil */
+    .profile-container {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+      max-width: 900px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+    .profile-photo {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #00000000;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0);
+      flex-shrink: 0;
+    }
+    .profile-info {
+      flex-grow: 1;
+      min-width: 250px;
+    }
+    .profile-info h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    .profile-info p {
+      margin: 6px 0;
+      color: #555;
+      font-size: 14px;
+    }
+    .edit-profile-btn {
+      margin-top: 15px;
+      background-color: #17bad7;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+    .edit-profile-btn:hover {
+      background-color: #1399b6;
+    }
+    /* Libros */
+    .book-grid {
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      flex-wrap: nowrap;
+    }
+    .book-card {
+      flex: 0 0 120px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      background: #fff;
+      transition: transform 0.2s ease;
+      min-width: 120px;
+    }
+    .book-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 234, 255, 0.15);
+    }
+    .book-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .book-title {
+      font-weight: bold;
+      font-size: 13px;
+      margin: 8px 0 4px;
+      height: 32px;
+      overflow: hidden;
+    }
+    .book-author, .book-editorial {
+      font-size: 11px;
+      color: #555;
+      margin: 2px 0;
+    }
+    .price {
+      color: #008000;
+      font-weight: bold;
+      margin: 5px 0;
+      font-size: 12px;
+    }
+    .stars {
+      color: gold;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    .badge {
+      background-color: #1399b6;
+      color: white;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 11px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+    .badgevig {
+      background-color: #06a300;
+      color: white;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 11px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+    .badgeexp {
+      background-color: #ff0000;
+      color: white;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 11px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+    /* Secciones de contenido */
+    section {
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 10px 15px;
+      }
+      .top-nav {
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .search-bar {
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 10px;
+      }
+      .book-grid {
+        gap: 10px;
+      }
+      main {
+        padding: 15px 10px;
+      }
+    }
+    @media (max-width: 480px) {
+      .book-card {
+        flex: 0 0 100px;
+        min-width: 100px;
+      }
+      .book-card img {
+        height: 140px;
+      }
+      .profile-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .profile-info {
+        min-width: auto;
+      }
+      .top-nav button {
+        font-size: 12px;
+        padding: 6px 8px;
+      }
+      .search-bar {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src='BIENVENIDOS.png' alt="Logo" width="400" height="100" />
+    <div class="top-nav">
+      <input type="text" class="search-bar" placeholder="¿Qué estás buscando?" />
+      <button class="nav-btn active" data-target="menu">Menú</button>
+      <button class="nav-btn" data-target="bibliotecas">Bibliotecas</button>
+      <button class="nav-btn" data-target="historial">Historial</button>
+      <button class="nav-btn" data-target="apartados">Apartados</button>
+      <button class="nav-btn" data-target="perfil">Perfil</button>
+    </div>
+  </header>
+
+
+  <main>
+     <!-- MENÚ -->
+     <section id="menu">
+      <h2>Menú</h2>
+      <h3>Recomendados</h3>
+      <div class="book-grid">
+        <div class="book-card">
+          <a href="1.html">
+          <img src="Libros/1.png" alt="Culpa Nuestra" />
+        </a>
+          <div class="badge">Los más leídos</div>
+          <div class="book-title">Culpa Nuestra</div>
+          <div class="book-author">Mercedes Ron</div>
+          <div class="book-editorial">Editorial: Molino</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <a href="2.html">
+          <img src="Libros/2.png" alt="En Agosto Nos Vemos" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">En Agosto Nos Vemos</div>
+          <div class="book-author">Gabriela Garcia</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <a href="3.html">
+          <img src="Libros/3.png" alt="La Biblioteca de la Medianoche" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <a href="4.html">
+          <img src="Libros/4.png" alt="No estas en la lista" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <a href="5.html">
+          <img src="Libros/5.png" alt="La Biblioteca de la Medianoche" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <a href="6.html">
+          <img src="Libros/6.png" alt="No estas en la lista" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <a href="7.html">
+          <img src="Libros/7.png" alt="No estas en la lista" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </a>
+        </div>
+        <div class="book-card">
+          <a href="8.html">
+            <img src="Libros/8.png" alt="No estas en la lista" />
+          </a>
+            <div class="badge">Recomendados</div>
+            <div class="book-title">No estas en la lista</div>
+            <div class="book-author">Alison Espach</div>
+            <div class="book-editorial">Editorial: VR</div>
+            <div class="stars">★★★☆☆</div>
+        </div>
+      </div>
+
+      <h3>Drama</h3>
+      <div class="book-grid">
+        <div class="book-card">
+          <a href="9.html">
+            <img src="https://gandhi.vtexassets.com/arquivos/ids/6835699-1200-auto?v=638780018406300000&width=1200&height=auto&aspect=true" alt="Culpa Nuestra" />
+          </a>
+            <div class="badge">Los más leídos</div>
+            <div class="book-title">Culpa Nuestra</div>
+            <div class="book-author">Mercedes Ron</div>
+            <div class="book-editorial">Editorial: Molino</div>
+            <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <a href="10.html">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/4614852-1200-auto?v=638574589263170000&width=1200&height=auto&aspect=true" alt="En Agosto Nos Vemos" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">En Agosto Nos Vemos</div>
+          <div class="book-author">Gabriela Garcia</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <a href="11.html">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1817481-1200-auto?v=638585715644300000&width=1200&height=auto&aspect=true" alt="La Biblioteca de la Medianoche" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <a href="12.html">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1799826-1200-auto?v=638491751435830000&width=1200&height=auto&aspect=true" alt="No estas en la lista" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <a href="13.html">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1978915-1200-auto?v=638429277040630000&width=1200&height=auto&aspect=true" alt="La Biblioteca de la Medianoche" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <a href="14.html">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6247194-1200-auto?v=638610088884470000&width=1200&height=auto&aspect=true" alt="No estas en la lista" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <a href="15.html">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6746904-1200-auto?v=638708996446930000&width=1200&height=auto&aspect=true alt="No estas en la lista" />
+        </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <a href="16.html"> 
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/4567117-1200-auto?v=638586468051400000&width=1200&height=auto&aspect=true" alt="No estas en la lista" />
+          </a>
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+      </div>
+      <h2>Bibliotecas Cercanas</h2>
+      <div class="book-grid" style="flex-wrap: wrap; overflow-x: visible;">
+        <div class="book-card" style="flex: 0 0 280px;">
+          <img src='https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrdLCO4ZWCaTwAk8Ex2kU4unNIdutMaaqCVEk6W0mJfWxzHPzTGHRA5NxGSOVY-sHGWS4Zdhi1RnqhCkaOzwibLpn9ULQ-pGsTEoeMns3w43OlW1i_FQL23iETdSvOG_nM7cSSxkZr6QqB6=s1360-w1360-h1020-rw' alt="Biblioteca Fortino León Almada" style="height: 150px; object-fit: cover; border-radius: 8px;" />
+          <div class="book-title">Biblioteca Fortino León Almada</div>
+          <div class="book-editorial">Dirección: C. Guerrero, Centro, 83000 Hermosillo, Son.</div>
+          <div class="book-editorial">Teléfono: 662 217 0691</div>
+        </div>
+        <div class="book-card" style="flex: 0 0 280px;">
+          <img src='https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqKmRPdEEjhqMKAW_5F-4MrZYoBUe-LunS25STgzkgcth70T6kvoVx3jKGz4Nq4sn6y3XIAyKcsvZgxuAVhKtjg6Bi4vx_ZFL0uV3OC72G7cUIcOJK65WnL6ibgcj69og_aDxlAlA=s1360-w1360-h1020-rw' alt="Biblioteca Rafael Meneses" style="height: 150px; object-fit: cover; border-radius: 8px;" />
+          <div class="book-title">Biblioteca Rafael Meneses</div>
+          <div class="book-editorial">Dirección: Av Tabasco 4-5, Modelo, 83190 Hermosillo, Son.</div>
+          <div class="book-editorial">Teléfono: -</div>
+        </div>
+      </div>
+      <h3>Romance</h3>
+      <div class="book-grid">
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1809430-1200-auto?v=638447598083530000&width=1200&height=auto&aspect=true" alt="Culpa Nuestra" />
+          <div class="badge">Los más leídos</div>
+          <div class="book-title">Culpa Nuestra</div>
+          <div class="book-author">Mercedes Ron</div>
+          <div class="book-editorial">Editorial: Molino</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1811018-1200-auto?v=638429210560470000&width=1200&height=auto&aspect=true" alt="En Agosto Nos Vemos" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">En Agosto Nos Vemos</div>
+          <div class="book-author">Gabriela Garcia</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1815436-1200-auto?v=638430243695170000&width=1200&height=auto&aspect=true" alt="La Biblioteca de la Medianoche" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6619499-1200-auto?v=638658253845130000&width=1200&height=auto&aspect=true" alt="No estas en la lista" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6808984-1200-auto?v=638737628486530000&width=1200&height=auto&aspect=true" alt="La Biblioteca de la Medianoche" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1806052-1200-auto?v=638471189450600000&width=1200&height=auto&aspect=true" alt="No estas en la lista" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1891577-1200-auto?v=638471197281330000&width=1200&height=auto&aspect=true" alt="No estas en la lista" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BIBLIOTECAS -->
+    <section id="bibliotecas" class="hidden">
+      <h2>Bibliotecas Cercanas</h2>
+      <div class="book-grid" style="flex-wrap: wrap; overflow-x: visible;">
+        <div class="book-card" style="flex: 0 0 280px;">
+          <img src='https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrdLCO4ZWCaTwAk8Ex2kU4unNIdutMaaqCVEk6W0mJfWxzHPzTGHRA5NxGSOVY-sHGWS4Zdhi1RnqhCkaOzwibLpn9ULQ-pGsTEoeMns3w43OlW1i_FQL23iETdSvOG_nM7cSSxkZr6QqB6=s1360-w1360-h1020-rw' alt="Biblioteca Fortino León Almada" style="height: 150px; object-fit: cover; border-radius: 8px;" />
+          <div class="book-title">Biblioteca Fortino León Almada</div>
+          <div class="book-editorial">Dirección: C. Guerrero, Centro, 83000 Hermosillo, Son.</div>
+          <div class="book-editorial">Teléfono: 662 217 0691</div>
+        </div>
+        <div class="book-card" style="flex: 0 0 280px;">
+          <img src='https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqKmRPdEEjhqMKAW_5F-4MrZYoBUe-LunS25STgzkgcth70T6kvoVx3jKGz4Nq4sn6y3XIAyKcsvZgxuAVhKtjg6Bi4vx_ZFL0uV3OC72G7cUIcOJK65WnL6ibgcj69og_aDxlAlA=s1360-w1360-h1020-rw' alt="Biblioteca Rafael Meneses" style="height: 150px; object-fit: cover; border-radius: 8px;" />
+          <div class="book-title">Biblioteca Rafael Meneses</div>
+          <div class="book-editorial">Dirección: Av Tabasco 4-5, Modelo, 83190 Hermosillo, Son.</div>
+          <div class="book-editorial">Teléfono: -</div>
+        </div>
+        <div>
+        <h2>Mapa de Bibliotecas Hermosillo</h2>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d111540.8679614797!2d-110.98028182707519!3d29.115949960353788!3m2!1i1024!2i768!4f13.1!2m1!1sbibliotecas%20publicas%20en%20hermosillo!5e0!3m2!1ses!2smx!4v1748283614749!5m2!1ses!2smx" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </section>
+
+    <!-- HISTORIAL -->
+    <section id="historial" class="hidden">
+      <h2>Historial de Lectura</h2>
+      <p>Aquí aparecerán los libros que has leído recientemente.</p>
+    </section>
+
+    <!-- APARTADOS -->
+    <section id="apartados" class="hidden">
+      <h3>Mis Apartados</h3>
+      <div class="book-grid">
+        <div class="book-card">
+          <a href="bibliotecamenu.html">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6835699-300-300?v=638780018406300000&width=300&height=300&aspect=true" alt="Culpa Nuestra" />
+        </a>
+          <div class="badgevig">Vigente</div>
+          <div class="book-title">Culpa Nuestra</div>
+          <div class="book-author">Mercedes Ron</div>
+          <div class="book-editorial">Editorial: Molino</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6669357-300-300?v=638684328675830000&width=300&height=300&aspect=true" alt="En Agosto Nos Vemos" />
+          <div class="badgevig">Vigente</div>
+          <div class="book-title">En Agosto Nos Vemos</div>
+          <div class="book-author">Gabriela Garcia</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6247194-1200-auto?v=638610088884470000&width=1200&height=auto&aspect=true" alt="La Biblioteca de la Medianoche" />
+          <div class="badgeexp">Expirado</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/1841539-300-300?v=638551361461200000&width=300&height=300&aspect=true" alt="No estas en la lista" />
+          <div class="badgeexp">Expirado</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+      </div>
+    </section>
+
+     <!-- PERFIL -->
+     <section id="perfil" class="hidden">
+      <div class="profile-container">
+        <img class="profile-photo" src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_1280.png" alt="Foto de perfil" />
+        <div class="profile-info">
+          <h2>Iván Díaz</h2>
+          <p><strong>Email:</strong> ivangilberto04@hotmail.com.com</p>
+          <p><strong>Nombre:</strong> Iván Gilberto</p>
+          <p><strong>  Apellido:</strong> Díaz Sonoqui</p>
+          <p><strong>Ubicación:</strong> - </p>
+          <button class="edit-profile-btn">Editar Perfil</button>
+        </div>
+      </div>
+
+      <h3>Libros Favoritos</h3>
+      <div class="book-grid">
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6247194-1200-auto?v=638610088884470000&width=1200&height=auto&aspect=true" alt="Culpa Nuestra" />
+          <div class="badge">Los más leídos</div>
+          <div class="book-title">Culpa Nuestra</div>
+          <div class="book-author">Mercedes Ron</div>
+          <div class="book-editorial">Editorial: Molino</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+        <div class="book-card">
+          <img src="https://gandhi.vtexassets.com/arquivos/ids/6835699-300-300?v=638780018406300000&width=300&height=300&aspect=true" alt="En Agosto Nos Vemos" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">En Agosto Nos Vemos</div>
+          <div class="book-author">Gabriela Garcia</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <img src="Libros/7.png" alt="La Biblioteca de la Medianoche" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">La Biblioteca de la Medianoche</div>
+          <div class="book-author">Matt Haig</div>
+          <div class="book-editorial">Editorial: Planeta</div>
+          <div class="stars">★★★★☆</div>
+        </div>
+        <div class="book-card">
+          <img src="Libros/4.png" alt="No estas en la lista" />
+          <div class="badge">Recomendados</div>
+          <div class="book-title">No estas en la lista</div>
+          <div class="book-author">Alison Espach</div>
+          <div class="book-editorial">Editorial: VR</div>
+          <div class="stars">★★★☆☆</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.nav-btn');
+    const sections = document.querySelectorAll('main section');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        sections.forEach(section => section.classList.add('hidden'));
+
+        const targetId = btn.getAttribute('data-target');
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) targetSection.classList.remove('hidden');
+      });
+    });
+  </script>
+</body>
+</html>

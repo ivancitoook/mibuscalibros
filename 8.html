@@ -1,0 +1,448 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Libro - Mi Busca Libros</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      background-color: #fff;
+      color: #333;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    .book-container {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+      max-width: 800px;
+      margin:50px auto;
+      flex-wrap: wrap;
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
+
+    .book-cover {
+      width: 170px;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    .book-info {
+      flex-grow: 1;
+      min-width: 250px;
+      text-align: justify;
+    }
+
+    .book-info h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .book-info p {
+      margin: 6px 0;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .search-library-btn {
+      margin-top: 20px;
+      background-color: #17bad7;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+
+    .search-library-btn:hover {
+      background-color: #1399b6;
+    }
+
+    @media (max-width: 480px) {
+      .book-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .book-info {
+        min-width: auto;
+        text-align: left;
+      }
+    }
+
+    header {
+      background-color: #f6f6f6;
+      padding: 10px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-size: 28px;
+      color: purple;
+      font-weight: bold;
+      max-width: 100%;
+      height: auto;
+      flex-shrink: 0;
+    }
+
+    .top-nav {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      flex-grow: 1;
+      justify-content: flex-end;
+    }
+
+    .top-nav button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: #333;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .top-nav button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .top-nav button.active {
+      background-color: #17bad7;
+      color: white;
+      font-weight: bold;
+      pointer-events: none;
+    }
+
+    .search-bar {
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      width: 250px;
+      margin-left: 20px;
+      max-width: 100%;
+      box-sizing: border-box;
+      flex-grow: 1;
+      min-width: 150px;
+    }
+
+    main {
+      padding: 30px 15px;
+      box-sizing: border-box;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Perfil */
+    .profile-container {
+      display: flex;
+      gap: 30px;
+      align-items: flex-start;
+      max-width: 900px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+
+    .profile-photo {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #00000000;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0);
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      flex-grow: 1;
+      min-width: 250px;
+    }
+
+    .profile-info h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .profile-info p {
+      margin: 6px 0;
+      color: #555;
+      font-size: 14px;
+    }
+
+    .edit-profile-btn {
+      margin-top: 15px;
+      background-color: #17bad7;
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+
+    .edit-profile-btn:hover {
+      background-color: #1399b6;
+    }
+
+    /* Libros */
+    .book-grid {
+      display: flex;
+      gap: 15px;
+      padding-bottom: 10px;
+      flex-wrap: nowrap;
+      max-width: 900px;
+      margin: 0 auto;
+      justify-content: center;
+      overflow-x: auto;
+    }
+
+    .book-card {
+      flex: 0 0 120px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      background: #fff;
+      transition: transform 0.2s ease;
+      min-width: 120px;
+    }
+
+    .book-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 234, 255, 0.15);
+    }
+
+    .book-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+
+    .book-title {
+      font-weight: bold;
+      font-size: 13px;
+      margin: 8px 0 4px;
+      height: 32px;
+      overflow: hidden;
+    }
+
+    .book-author, .book-editorial {
+      font-size: 11px;
+      color: #555;
+      margin: 2px 0;
+    }
+
+    .price {
+      color: #008000;
+      font-weight: bold;
+      margin: 5px 0;
+      font-size: 12px;
+    }
+
+    .stars {
+      color: gold;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .badge {
+      background-color: #1399b6;
+      color: white;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 11px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+
+    .badgevig {
+      background-color: #06a300;
+      color: white;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 11px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+
+    .badgeexp {
+      background-color: #ff0000;
+      color: white;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 11px;
+      display: inline-block;
+      margin-top: 5px;
+    }
+
+    /* Secciones de contenido */
+    section {
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    /* Nuevo estilo para el título de Recomendados */
+    .recommend-title {
+      max-width: 780px;
+      margin: 30px auto 10px;
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 10px 15px;
+      }
+      .top-nav {
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .search-bar {
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 10px;
+      }
+      .book-grid {
+        gap: 10px;
+      }
+      main {
+        padding: 15px 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .book-card {
+        flex: 0 0 100px;
+        min-width: 100px;
+      }
+      .book-card img {
+        height: 140px;
+      }
+      .profile-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .profile-info {
+        min-width: auto;
+      }
+      .top-nav button {
+        font-size: 12px;
+        padding: 6px 8px;
+      }
+      .search-bar {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="BIENVENIDOS.png" alt="Logo" width="400" height="100" />
+    <div class="top-nav">
+      <input type="text" class="search-bar" placeholder="¿Qué estás buscando?" />
+      <button class="nav-btn active" data-target="menu">Menú</button>
+      <button class="nav-btn" data-target="bibliotecas">Bibliotecas</button>
+      <button class="nav-btn" data-target="historial">Historial</button>
+      <button class="nav-btn" data-target="apartados">Apartados</button>
+      <button class="nav-btn" data-target="perfil">Perfil</button>
+    </div>
+  </header>
+
+  <section class="book-container">
+    <img class="book-cover" src="https://gandhi.vtexassets.com/arquivos/ids/4001803-1200-auto?v=638430301991200000&width=1200&height=auto&aspect=true" alt="Portada del libro" />
+    <div class="book-info">
+      <h2>Heartless</h2>
+      <p><strong>Autor:</strong> Marrisa Meyer</p>
+      <p><strong>Año:</strong> 2017</p>
+      <p><strong>Descripción:</strong> Mucho antes de convertirse en el terror del país de las maravillas, la reina de corazones era una chica que tan solo quería enamorarse Catherine es una de las jóvenes más deseadas de corazones. Es la favorita del rey. Pero ella quiere vivir bajo sus propias reglas y tomar las riendas de su vida. </p>
+      <button class="search-library-btn" onclick="alert('Buscando bibliotecas cercanas...')">Buscar bibliotecas</button>
+    </div>
+  </section>
+
+  <h3 class="recommend-title">Recomendados</h3>
+  <div class="book-grid">
+    <div class="book-card">
+      <img src="https://gandhi.vtexassets.com/arquivos/ids/6746924-1200-auto?v=638708998843300000&width=1200&height=auto&aspect=true" alt="Culpa Nuestra" />
+      <div class="badge">Los más leídos</div>
+      <div class="book-title">Culpa Nuestra</div>
+      <div class="book-author">Mercedes Ron</div>
+      <div class="book-editorial">Editorial: Molino</div>
+      <div class="stars">★★★☆☆</div>
+    </div>
+
+    <div class="book-card">
+      <img src="https://gandhi.vtexassets.com/arquivos/ids/6746918-1200-auto?v=638708998252470000&width=1200&height=auto&aspect=true" alt="En Agosto Nos Vemos" />
+      <div class="badge">Recomendados</div>
+      <div class="book-title">En Agosto Nos Vemos</div>
+      <div class="book-author">Gabriela García</div>
+      <div class="book-editorial">Editorial: Planeta</div>
+      <div class="stars">★★★★☆</div>
+    </div>
+
+    <div class="book-card">
+      <img src="https://gandhi.vtexassets.com/arquivos/ids/6746907-1200-auto?v=638708997047930000&width=1200&height=auto&aspect=true" alt="La Biblioteca de la Medianoche" />
+      <div class="badge">Recomendados</div>
+      <div class="book-title">La Biblioteca de la Medianoche</div>
+      <div class="book-author">Matt Haig</div>
+      <div class="book-editorial">Editorial: Planeta</div>
+      <div class="stars">★★★★☆</div>
+    </div>
+
+    <div class="book-card">
+      <img src="https://gandhi.vtexassets.com/arquivos/ids/1807973-1200-auto?v=638452698640870000&width=1200&height=auto&aspect=true" alt="No estás en la lista" />
+      <div class="badge">Recomendados</div>
+      <div class="book-title">No estás en la lista</div>
+      <div class="book-author">Alison Espach</div>
+      <div class="book-editorial">Editorial: VR</div>
+      <div class="stars">★★★☆☆</div>
+    </div>
+
+    <div class="book-card">
+      <img src="https://gandhi.vtexassets.com/arquivos/ids/1807966-1200-auto?v=638471187711800000&width=1200&height=auto&aspect=true" alt="No estás en la lista" />
+      <div class="badge">Recomendados</div>
+      <div class="book-title">No estás en la lista</div>
+      <div class="book-author">Alison Espach</div>
+      <div class="book-editorial">Editorial: VR</div>
+      <div class="stars">★★★☆☆</div>
+    </div>
+  </div>
+    </div>
+  </div>
+</body>
+</html>
